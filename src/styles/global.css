@@ -1,4 +1,5 @@
 @charset "UTF-8";
+/* ===== Fonts ===== */
 @font-face {
   font-family: "PT Sans";
   src: url("../assets/fonts/ptsans-regular.woff2") format("woff2");
@@ -13,23 +14,32 @@
   font-style: normal;
   font-display: swap;
 }
+/* ===== CSS Variables ===== */
 :root {
-  --c-blue-strong: #5d5fef; /* большие цифры слева */
-  --c-blue: #3877ee; /* заголовки годов снизу */
-  --c-pink: #ef5da8; /* большие цифры справа */
-  --c-text: #42567a; /* основной текст */
-  --c-bg: #f4f5f9; /* светлый фон по фигме */
-  --c-stroke: #303e58; /* линии/окружность (в фигме 50%) */
-  --g-accent: linear-gradient(90deg, #3877ee 0%, #ef5da8 100%);
+  --c-blue-strong: #5d5fef;
+  --c-blue: #3877ee;
+  --c-pink: #ef5da8;
+  --c-text: #42567a;
+  --c-bg: #f4f5f9;
+  --c-stroke: #303e58;
+  /* вертикальный градиент для уса заголовка */
+  --g-accent-vert: linear-gradient(180deg, #3877ee 0%, #ef5da8 100%);
+  /* размеры круга (должны совпадать с TSX) */
+  --orbit-w: 536px;
+  --orbit-h: 530px;
+  /* контейнерные отступы (ПК: слева 320, справа 160) */
   --container-pad-left: clamp(16px, 8vw, 320px);
   --container-pad-right: clamp(16px, 4vw, 160px);
 }
 
+/* ===== Base ===== */
 * {
   box-sizing: border-box;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
 }
 
@@ -37,10 +47,374 @@ body {
   margin: 0;
   font-family: "PT Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   color: var(--c-text);
-  background: white;
+  background: #fff;
 }
 
 .container {
   padding-left: var(--container-pad-left);
   padding-right: var(--container-pad-right);
+}
+
+/* ===== Historical Dates ===== */
+.hdates {
+  position: relative;
+  padding: 20px 0 clamp(24px, 6vw, 70px) 0;
+}
+
+.hdates__stage {
+  position: relative;
+  height: calc(var(--orbit-h));
+}
+
+/* на мобиле сцена не нужна фиксированной высоты */
+@media (max-width: 767px) {
+  .hdates__stage {
+    height: auto;
+  }
+}
+/* сеточные линии: центральные + боковые */
+.hdates__grid-line {
+  position: absolute;
+  inset: 0 auto 0 50%;
+  width: 1px;
+  background: rgba(48, 62, 88, 0.2);
+  transform: translateX(-50%);
+}
+
+.hdates__grid-line--h {
+  inset: 50% 0 auto 0;
+  height: 1px;
+  width: 100%;
+  transform: translateY(-50%);
+}
+
+.hdates__grid-line--left {
+  inset: 0 auto 0 0;
+  transform: none;
+}
+
+.hdates__grid-line--right {
+  inset: 0 0 0 auto;
+  left: auto;
+  transform: none;
+}
+
+/* Заголовок */
+.hdates__title {
+  display: flex;
+  align-items: center;
+  gap: 46px;
+  margin: 0 0 24px 0;
+  font-weight: 700;
+  font-size: clamp(20px, 4vw, 56px);
+  line-height: 1.2;
+  color: var(--c-text);
+}
+
+.hdates__title-bar {
+  width: 4px;
+  height: 2em;
+  background: var(--g-accent-vert);
+}
+
+/* Большие числа — абсолютом по центру секции поверх круга */
+.hdates__years {
+  position: absolute;
+  left: 50%;
+  top: calc(50% - var(--orbit-h) / 11 - 25px);
+  transform: translateX(-50%);
+  z-index: -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(16px, 4vw, 48px);
+  margin: 0;
+  pointer-events: none; /* не перекрываем клики по точкам */
+}
+
+.hdates__year {
+  font-weight: 700;
+  font-size: clamp(56px, 12vw, 200px);
+  line-height: 1.6;
+  white-space: nowrap;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
+.hdates__year--start {
+  color: var(--c-blue-strong);
+}
+
+.hdates__year--end {
+  color: var(--c-pink);
+}
+
+/* Круг — строго на перекрестии центральных линий */
+.hdates__orbit {
+  position: absolute;
+  left: 50%;
+  top: 64%;
+  width: var(--orbit-w);
+  height: var(--orbit-h);
+  border-radius: 50%;
+  z-index: 100;
+  border: 1px solid rgba(48, 62, 88, 0.2);
+  transform: translate(-50%, -50%);
+  transform-origin: 50% 50%;
+}
+
+/* На мобиле круг/линии/градиент скрываем */
+@media (max-width: 767px) {
+  .hdates__grid-line,
+  .hdates__title-bar,
+  .hdates__orbit {
+    display: none;
+  }
+  /* на мобиле числа возвращаем в документный поток */
+  .hdates__years {
+    position: static;
+    transform: none;
+    margin: clamp(8px, 3vw, 24px) 0;
+    pointer-events: auto;
+  }
+}
+/* Точки */
+.hdates__dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c-stroke);
+  transform: translate(-50%, -50%);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  /* БОЛЬШОЙ hitbox */
+  /* чтобы фокус с клавиатуры был виден по большому кругу */
+}
+.hdates__dot::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* размер кликабельной зоны (минимум 44x44 для доступности) */
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  /* визуально прозрачная, но ловит события */
+  background: transparent;
+}
+.hdates__dot:focus-visible::before {
+  outline: 2px solid rgba(56, 119, 238, 0.5);
+  outline-offset: 0;
+}
+
+/* На тач-устройствах можно сделать ещё больше */
+@media (max-width: 767px) {
+  .hdates__dot::before {
+    width: 56px;
+    height: 56px;
+  }
+}
+.hdates__float-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(0, -50%);
+  white-space: nowrap;
+  font-size: 20px;
+  color: var(--c-text);
+  line-height: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 150;
+}
+
+/* на мобиле лейбл можно скрыть (по желанию) */
+@media (max-width: 767px) {
+  .hdates__float-label {
+    display: none;
+  }
+}
+/* пузырь и лейбл остаются как есть */
+.hdates__dot-bubble {
+  pointer-events: none;
+}
+
+.hdates__dot-label {
+  pointer-events: none;
+}
+
+.hdates__dot-bubble {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--c-bg);
+  border: 1px solid rgba(48, 62, 88, 0.5);
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.72);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+}
+
+.hdates__dot-bubble-text {
+  color: var(--c-text);
+  font-size: 20px;
+  line-height: 1;
+  /* контр-поворот задаётся из JS */
+}
+
+.hdates__dot-label {
+  position: absolute;
+  left: calc(50% - 57px); /* точка опоры — чуть левее центра */
+  top: 50%;
+  transform: translate(-100%, -50%); /* уводим весь текст ещё левее */
+  white-space: nowrap;
+  font-size: 20px;
+  color: var(--c-text);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  text-align: right;
+}
+
+.hdates__dot:hover .hdates__dot-bubble,
+.hdates__dot.is-active .hdates__dot-bubble {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.hdates__dot:hover .hdates__dot-label,
+.hdates__dot.is-active .hdates__dot-label {
+  opacity: 1;
+}
+
+/* Стрелки категорий (прозрачные, без бордера; hover — белый фон) */
+.hdates__nav {
+  position: absolute;
+  bottom: -34px;
+  display: flex;
+  gap: 12px;
+}
+
+.hdates__nav-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, opacity 0.2s ease, transform 0.1s ease;
+}
+
+.hdates__nav-btn:hover {
+  background: #fff;
+}
+
+.hdates__nav-btn:active {
+  transform: scale(0.98);
+}
+
+.hdates__nav-btn[disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Нижний слайдер */
+.hdates-events {
+  position: relative;
+  margin-top: clamp(12px, 3vw, 24px);
+  padding: 0 30px;
+  top: 50px;
+  min-height: 200px;
+}
+
+.hdates-events__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  color: var(--c-text);
+}
+
+.hdates-card {
+  padding-right: clamp(12px, 2vw, 24px);
+  background: transparent;
+}
+
+.hdates-card__year {
+  color: var(--c-blue);
+  font-weight: 700;
+  font-size: clamp(18px, 2vw, 25px);
+  margin-bottom: 8px;
+}
+
+.hdates-card__text {
+  font-size: clamp(14px, 2vw, 20px);
+  line-height: 1.5;
+  color: var(--c-text);
+}
+
+/* стрелки поверх слайдера, по краям */
+.hdates-events__arrows {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hdates-events__btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: auto;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: opacity 1s ease;
+}
+
+.hdates-events__btn--prev {
+  left: -70px;
+  top: 60px;
+}
+
+.hdates-events__btn--next {
+  right: 0px;
+  top: 60px;
+}
+
+/* прячем кнопки, когда листать некуда (Swiper ставит disabled) */
+@media (min-width: 768px) {
+  .hdates-events__btn[disabled] {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+/* пагинация: на ПК скрыта, на мобилке показана */
+@media (min-width: 768px) {
+  .swiper-pagination {
+    display: none !important;
+  }
+}
+@media (max-width: 767px) {
+  .swiper-pagination {
+    display: block !important;
+    position: static;
+    margin-top: 8px;
+  }
 }/*# sourceMappingURL=global.css.map */
