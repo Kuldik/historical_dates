@@ -1,0 +1,41 @@
+@font-face {
+  font-family: 'PT Sans';
+  src: url('../assets/fonts/ptsans-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PT Sans';
+  src: url('../assets/fonts/ptsans-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --c-blue-strong: #5d5fef; /* большие цифры слева */
+  --c-blue: #3877ee;        /* заголовки годов снизу */
+  --c-pink: #ef5da8;        /* большие цифры справа */
+  --c-text: #42567a;        /* основной текст */
+  --c-bg: #f4f5f9;          /* светлый фон по фигме */
+  --c-stroke: #303e58;      /* линии/окружность (в фигме 50%) */
+  --g-accent: linear-gradient(90deg, #3877ee 0%, #ef5da8 100%);
+
+  --container-pad-left: clamp(16px, 8vw, 320px);
+  --container-pad-right: clamp(16px, 4vw, 160px);
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  font-family: 'PT Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: var(--c-text);
+  background: white;
+}
+
+.container {
+  padding-left: var(--container-pad-left);
+  padding-right: var(--container-pad-right);
+}
