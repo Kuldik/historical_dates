@@ -1,4 +1,5 @@
 @charset "UTF-8";
+/* Fonts (локально подключишь свои woff2 в /public или /src/assets/fonts) */
 @font-face {
   font-family: "PT Sans";
   src: url("../assets/fonts/ptsans-regular.woff2") format("woff2");
@@ -43,4 +44,222 @@ body {
 .container {
   padding-left: var(--container-pad-left);
   padding-right: var(--container-pad-right);
+}
+
+/* БЭМ-блок */
+.hdates {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Вертик./горизонтальные линии — часть верстки */
+.hdates__grid-line {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: rgba(48, 62, 88, 0.2);
+  transform: translateX(-50%);
+}
+
+.hdates__grid-line--h {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+.hdates__title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  font-size: clamp(20px, 4vw, 56px);
+  color: #42567a;
+  margin: 40px 0 24px;
+}
+
+.hdates__title-bar {
+  width: 4px;
+  height: 1em;
+  background: var(--g-accent);
+  border-radius: 2px;
+}
+
+.hdates__years {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 4vw, 48px);
+  margin: clamp(16px, 4vw, 32px) 0;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
+.hdates__year {
+  font-weight: 700;
+  line-height: 1.6;
+  font-size: clamp(56px, 12vw, 200px);
+  white-space: nowrap;
+}
+
+.hdates__year--start {
+  color: var(--c-blue-strong);
+}
+
+.hdates__year--end {
+  color: var(--c-pink);
+}
+
+/* Центральный круг 536x530 */
+.hdates__orbit {
+  position: relative;
+  width: 536px;
+  height: 530px;
+  border-radius: 50%;
+  border: 1px solid rgba(48, 62, 88, 0.2);
+  margin: clamp(16px, 4vw, 24px) auto;
+  pointer-events: none; /* контейнер не ловит события, только точки */
+}
+
+@media (max-width: 767px) {
+  .hdates__title-bar,
+  .hdates__grid-line {
+    display: none;
+  } /* по ТЗ скрываем */
+  .hdates__orbit {
+    display: none;
+  } /* скрываем круг на мобиле */
+}
+/* Точки на окружности */
+.hdates__dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--c-stroke);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+
+.hdates__dot-bubble {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--c-bg);
+  border: 1px solid rgba(48, 62, 88, 0.5);
+  display: grid;
+  place-items: center;
+  color: var(--c-text);
+  font-size: 20px;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.7);
+  pointer-events: none;
+}
+
+.hdates__dot-label {
+  position: absolute;
+  left: calc(50% + 36px);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: var(--c-text);
+  white-space: nowrap;
+  opacity: 0;
+}
+
+/* Стрелки смены промежутков (прозрачные по умолчанию) */
+.hdates__nav {
+  position: absolute;
+  bottom: 220px;
+  left: var(--container-pad-left);
+  display: flex;
+  gap: 12px;
+}
+
+.hdates__nav-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 1px solid rgba(48, 62, 88, 0.2);
+  cursor: pointer;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.hdates__nav-btn:hover {
+  background: white;
+}
+
+.hdates__nav-btn[disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Нижний слайдер */
+.hdates-events {
+  margin-top: clamp(16px, 4vw, 32px);
+}
+
+.hdates-events__top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  color: var(--c-text);
+}
+
+.hdates-events__counter {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.hdates-events__nav {
+  display: flex;
+  gap: 8px;
+}
+
+.hdates-events__btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: white;
+  border: 1px solid rgba(48, 62, 88, 0.2);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.hdates-events__btn[disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.hdates-card {
+  background: transparent;
+  padding-right: clamp(12px, 2vw, 24px);
+}
+
+.hdates-card__year {
+  color: var(--c-blue);
+  font-weight: 700;
+  font-size: clamp(18px, 2vw, 25px);
+  margin-bottom: 8px;
+}
+
+.hdates-card__text {
+  font-size: clamp(14px, 2vw, 20px);
+  line-height: 1.5;
+  color: var(--c-text);
 }/*# sourceMappingURL=global.css.map */
