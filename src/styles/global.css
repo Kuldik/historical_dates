@@ -63,7 +63,7 @@ body {
 
 .hdates__stage {
   position: relative;
-  height: calc(var(--orbit-h));
+  height: var(--orbit-h);
 }
 
 /* на мобиле сцена не нужна фиксированной высоты */
@@ -121,7 +121,7 @@ body {
 .hdates__years {
   position: absolute;
   left: 50%;
-  top: calc(50% - var(--orbit-h) / 11 - 25px);
+  top: calc(50% - var(--orbit-h) / 8 - 25px);
   transform: translateX(-50%);
   z-index: -1;
   display: flex;
@@ -129,7 +129,7 @@ body {
   align-items: center;
   gap: clamp(16px, 4vw, 48px);
   margin: 0;
-  pointer-events: none; /* не перекрываем клики по точкам */
+  pointer-events: none;
 }
 
 .hdates__year {
@@ -150,7 +150,7 @@ body {
   color: var(--c-pink);
 }
 
-/* Круг — строго на перекрестии центральных линий */
+/* Круг */
 .hdates__orbit {
   position: absolute;
   left: 50%;
@@ -171,7 +171,6 @@ body {
   .hdates__orbit {
     display: none;
   }
-  /* на мобиле числа возвращаем в документный поток */
   .hdates__years {
     position: static;
     transform: none;
@@ -182,28 +181,25 @@ body {
 /* Точки */
 .hdates__dot {
   position: absolute;
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--c-stroke);
   transform: translate(-50%, -50%);
   border: none;
   padding: 0;
   cursor: pointer;
-  /* БОЛЬШОЙ hitbox */
-  /* чтобы фокус с клавиатуры был виден по большому кругу */
+  /* большой hitbox */
 }
 .hdates__dot::before {
   content: "";
   position: absolute;
   left: 50%;
   top: 50%;
-  /* размер кликабельной зоны (минимум 44x44 для доступности) */
   width: 44px;
   height: 44px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  /* визуально прозрачная, но ловит события */
   background: transparent;
 }
 .hdates__dot:focus-visible::before {
@@ -211,13 +207,13 @@ body {
   outline-offset: 0;
 }
 
-/* На тач-устройствах можно сделать ещё больше */
 @media (max-width: 767px) {
   .hdates__dot::before {
     width: 56px;
     height: 56px;
   }
 }
+/* плавающие лейблы */
 .hdates__float-label {
   position: absolute;
   left: 0;
@@ -233,21 +229,12 @@ body {
   z-index: 150;
 }
 
-/* на мобиле лейбл можно скрыть (по желанию) */
 @media (max-width: 767px) {
   .hdates__float-label {
     display: none;
   }
 }
-/* пузырь и лейбл остаются как есть */
-.hdates__dot-bubble {
-  pointer-events: none;
-}
-
-.hdates__dot-label {
-  pointer-events: none;
-}
-
+/* пузырёк с номером */
 .hdates__dot-bubble {
   position: absolute;
   top: 50%;
@@ -272,31 +259,13 @@ body {
   /* контр-поворот задаётся из JS */
 }
 
-.hdates__dot-label {
-  position: absolute;
-  left: calc(50% - 57px); /* точка опоры — чуть левее центра */
-  top: 50%;
-  transform: translate(-100%, -50%); /* уводим весь текст ещё левее */
-  white-space: nowrap;
-  font-size: 20px;
-  color: var(--c-text);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  text-align: right;
-}
-
 .hdates__dot:hover .hdates__dot-bubble,
 .hdates__dot.is-active .hdates__dot-bubble {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }
 
-.hdates__dot:hover .hdates__dot-label,
-.hdates__dot.is-active .hdates__dot-label {
-  opacity: 1;
-}
-
-/* Стрелки категорий (прозрачные, без бордера; hover — белый фон) */
+/* Стрелки категорий */
 .hdates__nav {
   position: absolute;
   bottom: -34px;
@@ -315,15 +284,12 @@ body {
   cursor: pointer;
   transition: background 0.2s ease, opacity 0.2s ease, transform 0.1s ease;
 }
-
 .hdates__nav-btn:hover {
   background: #fff;
 }
-
 .hdates__nav-btn:active {
   transform: scale(0.98);
 }
-
 .hdates__nav-btn[disabled] {
   opacity: 0.5;
   cursor: default;
@@ -343,24 +309,6 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
-  color: var(--c-text);
-}
-
-.hdates-card {
-  padding-right: clamp(12px, 2vw, 24px);
-  background: transparent;
-}
-
-.hdates-card__year {
-  color: var(--c-blue);
-  font-weight: 700;
-  font-size: clamp(18px, 2vw, 25px);
-  margin-bottom: 8px;
-}
-
-.hdates-card__text {
-  font-size: clamp(14px, 2vw, 20px);
-  line-height: 1.5;
   color: var(--c-text);
 }
 
@@ -386,18 +334,14 @@ body {
   cursor: pointer;
   transition: opacity 1s ease;
 }
-
 .hdates-events__btn--prev {
   left: -70px;
   top: 60px;
 }
-
 .hdates-events__btn--next {
   right: 0px;
   top: 60px;
 }
-
-/* прячем кнопки, когда листать некуда (Swiper ставит disabled) */
 @media (min-width: 768px) {
   .hdates-events__btn[disabled] {
     opacity: 0;
@@ -405,6 +349,26 @@ body {
     pointer-events: none;
   }
 }
+
+/* карточки слайдера */
+.hdates-card {
+  padding-right: clamp(12px, 2vw, 24px);
+  background: transparent;
+}
+
+.hdates-card__year {
+  color: var(--c-blue);
+  font-weight: 700;
+  font-size: clamp(18px, 2vw, 25px);
+  margin-bottom: 8px;
+}
+
+.hdates-card__text {
+  font-size: clamp(14px, 2vw, 20px);
+  line-height: 1.5;
+  color: var(--c-text);
+}
+
 /* пагинация: на ПК скрыта, на мобилке показана */
 @media (min-width: 768px) {
   .swiper-pagination {

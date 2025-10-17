@@ -1,4 +1,3 @@
-// src/modules/HistoricalDates/HistoricalDates.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { Navigation, Pagination } from 'swiper/modules';
@@ -29,6 +28,9 @@ const TARGET_ANGLE = 20;
 
 const EVENTS_FADE_DURATION = 0.5;
 
+// сдвиг всех точек вдоль дуги (в градусах). + по часовой, - против
+const DOTS_ANGLE_OFFSET = 8;
+
 // Смещение лейблов относительно центра точки: вправо и чуть выше
 const LABEL_GAP_X = 36;
 const LABEL_OFFSET_Y = 12;
@@ -55,7 +57,7 @@ export const HistoricalDates: React.FC = () => {
   const prevYearsRef = useRef<{ from: number; to: number }>({ from, to });
   const eventsWrapRef = useRef<HTMLDivElement>(null);
 
-  // утилита: поставить лейбл у точки с индексом idx
+  // поставить лейбл у точки с индексом idx
   const positionLabelAtIndex = (idx: number, el: HTMLElement | null) => {
     const stage = stageRef.current;
     const orbit = orbitRef.current;
@@ -80,7 +82,8 @@ export const HistoricalDates: React.FC = () => {
     const orbit = orbitRef.current;
     if (!orbit) return;
 
-    const desired = TARGET_ANGLE - activeIdx * ANGLE_STEP;
+    // с учётом общего сдвига точек по дуге
+    const desired = TARGET_ANGLE - (activeIdx * ANGLE_STEP + DOTS_ANGLE_OFFSET);
 
     gsap.to(orbit, {
       rotate: desired,
@@ -161,8 +164,6 @@ export const HistoricalDates: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const DOTS_ANGLE_OFFSET = 8; // + вправо по часовой, - влево против часовой
-
   return (
     <section className="hdates" aria-label="Исторические даты">
       {/* сетка */}
@@ -196,6 +197,8 @@ export const HistoricalDates: React.FC = () => {
             const BORDER_W = 0.5;
             const rx = ORBIT_W / 2 - BORDER_W / 2;
             const ry = ORBIT_H / 2 - BORDER_W / 2;
+
+            // общий сдвиг точек по дуге
             const angle = ((i * ANGLE_STEP + DOTS_ANGLE_OFFSET) - 90) * (Math.PI / 180);
             const x = cx + rx * Math.cos(angle);
             const y = cy + ry * Math.sin(angle);
@@ -215,7 +218,6 @@ export const HistoricalDates: React.FC = () => {
                 onClick={() => setActiveCat(cat)}
                 onMouseEnter={() => {
                   setHoverIdx(i);
-                  // показать и поставить hover-лейбл
                   gsap.delayedCall(0, () => {
                     positionLabelAtIndex(i, hoverLabelRef.current);
                     gsap.to(hoverLabelRef.current, { autoAlpha: 1, duration: 0.2 });
@@ -238,7 +240,11 @@ export const HistoricalDates: React.FC = () => {
         <div className="hdates__float-label hdates__float-label--active" ref={activeLabelRef}>
           {activeCat}
         </div>
-        <div className="hdates__float-label hdates__float-label--hover" ref={hoverLabelRef} style={{ opacity: 0 }}>
+        <div
+          className="hdates__float-label hdates__float-label--hover"
+          ref={hoverLabelRef}
+          style={{ opacity: 0 }}
+        >
           {hoverIdx !== null ? CATEGORY_ORDER[hoverIdx] : ''}
         </div>
 
@@ -263,10 +269,16 @@ export const HistoricalDates: React.FC = () => {
 
         {/* внешние стрелки Swiper */}
         <div className="hdates-events__arrows">
-          <button className="hdates-events__btn hdates-events__btn--prev js-events-prev" aria-label="Предыдущие годы">
+          <button
+            className="hdates-events__btn hdates-events__btn--prev js-events-prev"
+            aria-label="Предыдущие годы"
+          >
             <img src={arrowDatesLeft} width={64} height={64} alt="" />
           </button>
-          <button className="hdates-events__btn hdates-events__btn--next js-events-next" aria-label="Следующие годы">
+          <button
+            className="hdates-events__btn hdates-events__btn--next js-events-next"
+            aria-label="Следующие годы"
+          >
             <img src={arrowDatesRight} width={64} height={64} alt="" />
           </button>
         </div>
