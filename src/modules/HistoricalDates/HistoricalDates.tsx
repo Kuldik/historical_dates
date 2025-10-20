@@ -1,3 +1,4 @@
+// src/modules/HistoricalDates/HistoricalDates.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { Navigation, Pagination } from 'swiper/modules';
@@ -20,8 +21,8 @@ import arrowRight from '@/assets/arrow-right.svg';
 import arrowDatesLeft from '@/assets/arrow-dates-left.svg';
 import arrowDatesRight from '@/assets/arrow-dates-right.svg';
 
-const ORBIT_W = 536; // должен совпадать с --orbit-w в scss
-const ORBIT_H = 530; // должен совпадать с --orbit-h в scss
+const ORBIT_W = 536;
+const ORBIT_H = 530;
 const DOTS_COUNT = 6;
 const ANGLE_STEP = 360 / DOTS_COUNT;
 const TARGET_ANGLE = 20;
@@ -31,7 +32,7 @@ const EVENTS_FADE_DURATION = 0.5;
 // сдвиг всех точек вдоль дуги (в градусах). + по часовой, - против
 const DOTS_ANGLE_OFFSET = 8;
 
-// Смещение лейблов относительно центра точки: вправо и чуть выше
+// подпись у точки (вправо и чуть вверх)
 const LABEL_GAP_X = 36;
 const LABEL_OFFSET_Y = 12;
 
@@ -47,6 +48,7 @@ export const HistoricalDates: React.FC = () => {
   const stageRef = useRef<HTMLDivElement>(null);
   const orbitRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<any>(null);
+  const swiperBoxRef = useRef<HTMLDivElement>(null);
 
   const activeLabelRef = useRef<HTMLDivElement>(null);
   const hoverLabelRef = useRef<HTMLDivElement>(null);
@@ -137,13 +139,17 @@ export const HistoricalDates: React.FC = () => {
   // при смене категории: слайдер в начало + fade-in блока + переставить активный лейбл
   useEffect(() => {
     if (swiperRef.current) swiperRef.current.slideTo(0, 400);
-    if (eventsWrapRef.current) {
+
+    const box = swiperBoxRef.current;
+    if (box) {
+      gsap.killTweensOf(box);
       gsap.fromTo(
-        eventsWrapRef.current,
+        box,
         { autoAlpha: 0, y: 10 },
-        { autoAlpha: 1, y: 0, duration: EVENTS_FADE_DURATION, ease: 'power1.out' },
+        { autoAlpha: 1, y: 0, duration: EVENTS_FADE_DURATION, ease: 'power1.out', clearProps: 'opacity,transform' }
       );
     }
+
     gsap.delayedCall(0, () => {
       positionLabelAtIndex(activeIdx, activeLabelRef.current);
       gsap.set(activeLabelRef.current, { autoAlpha: 1 });
@@ -175,7 +181,7 @@ export const HistoricalDates: React.FC = () => {
       {/* заголовок */}
       <h2 className="hdates__title">
         <span className="hdates__title-bar" aria-hidden="true" />
-        Исторические даты
+        Исторические<br className="hdates__title-br" /> даты
       </h2>
 
       <div className="hdates__stage" ref={stageRef}>
@@ -189,7 +195,12 @@ export const HistoricalDates: React.FC = () => {
           </span>
         </div>
 
-        {/* орбита с точками */}
+        {/* подпись активного промежутка над линией (видна только на мобилке) */}
+        <div className="hdates__mob-range">{activeCat}</div>
+        {/* разделительная линия для мобилки */}
+        <div className="hdates__mob-sep" aria-hidden="true" />
+
+        {/* орбита с точками (ПК) */}
         <div className="hdates__orbit" ref={orbitRef}>
           {Array.from({ length: DOTS_COUNT }).map((_, i) => {
             const cx = ORBIT_W / 2;
@@ -236,7 +247,7 @@ export const HistoricalDates: React.FC = () => {
           })}
         </div>
 
-        {/* Плавающие лейблы: активный (всегда виден) и hover (только при наведении) */}
+        {/* плавающие лейблы (ПК) */}
         <div className="hdates__float-label hdates__float-label--active" ref={activeLabelRef}>
           {activeCat}
         </div>
@@ -248,7 +259,7 @@ export const HistoricalDates: React.FC = () => {
           {hoverIdx !== null ? CATEGORY_ORDER[hoverIdx] : ''}
         </div>
 
-        {/* стрелки категорий */}
+        {/* стрелки категорий (ПК) */}
         <div className="hdates__nav" aria-label="Переключение категорий">
           <button className="hdates__nav-btn" onClick={prevCategory} aria-label="Назад">
             <img src={arrowLeft} width={56} height={56} alt="" />
@@ -261,13 +272,14 @@ export const HistoricalDates: React.FC = () => {
 
       {/* нижний блок со слайдером событий */}
       <div className="hdates-events" ref={eventsWrapRef}>
+        {/* ПК: счётчик сверху; на мобилке — в футере */}
         <div className="hdates-events__top">
           <div className="hdates-events__counter">
             {String(activeIdx + 1).padStart(2, '0')}/{String(CATEGORY_ORDER.length).padStart(2, '0')}
           </div>
         </div>
 
-        {/* внешние стрелки Swiper */}
+        {/* стрелки по краям слайдера (ПК) */}
         <div className="hdates-events__arrows">
           <button
             className="hdates-events__btn hdates-events__btn--prev js-events-prev"
@@ -283,41 +295,72 @@ export const HistoricalDates: React.FC = () => {
           </button>
         </div>
 
-        <Swiper
-          onSwiper={(s) => (swiperRef.current = s)}
-          modules={[Navigation, Pagination]}
-          navigation={{ prevEl: '.js-events-prev', nextEl: '.js-events-next' }}
-          pagination={{ clickable: true }}
-          spaceBetween={24}
-          breakpoints={{ 0: { slidesPerView: 1.5 }, 768: { slidesPerView: 3 } }}
-          onInit={(swiper) => {
-            const toArr = (el: any) => (Array.isArray(el) ? el : [el]);
-            const prevEls = toArr((swiper.navigation as any).prevEl);
-            const nextEls = toArr((swiper.navigation as any).nextEl);
-            const setDis = (el: Element | null, s: boolean) =>
-              el && (s ? el.setAttribute('disabled', '') : el.removeAttribute('disabled'));
-            const upd = () => {
-              prevEls.forEach((el) => setDis(el, swiper.isBeginning));
-              nextEls.forEach((el) => setDis(el, swiper.isEnd));
-            };
-            swiper.on('slideChange', upd);
-            swiper.on('update', upd);
-            upd();
-          }}
-        >
-          {Array.from({ length: to - from + 1 }).map((_, k) => {
-            const year = from + k;
-            const text = eventsForYear(year, activeCat);
-            return (
-              <SwiperSlide key={year}>
-                <article className="hdates-card">
-                  <div className="hdates-card__year">{year}</div>
-                  <div className="hdates-card__text">{text}</div>
-                </article>
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
+        <div className="hdates-events__swiper" ref={swiperBoxRef}>
+          <Swiper
+            onSwiper={(s) => (swiperRef.current = s)}
+            modules={[Navigation, Pagination]}
+            navigation={{ prevEl: '.js-events-prev', nextEl: '.js-events-next' }}
+            pagination={{ clickable: true, el: '.hdates-mobile-pagination' }}
+            spaceBetween={24}
+            breakpoints={{ 0: { slidesPerView: 1.5 }, 768: { slidesPerView: 3 } }}
+            onInit={(swiper) => {
+              const toArr = (el: any) => (Array.isArray(el) ? el : [el]);
+              const prevEls = toArr((swiper.navigation as any).prevEl);
+              const nextEls = toArr((swiper.navigation as any).nextEl);
+              const setDis = (el: Element | null, s: boolean) =>
+                el && (s ? el.setAttribute('disabled', '') : el.removeAttribute('disabled'));
+              const upd = () => {
+                prevEls.forEach((el) => setDis(el, swiper.isBeginning));
+                nextEls.forEach((el) => setDis(el, swiper.isEnd));
+              };
+              swiper.on('slideChange', upd);
+              swiper.on('update', upd);
+              upd();
+            }}
+          >
+            {Array.from({ length: to - from + 1 }).map((_, k) => {
+              const year = from + k;
+              const text = eventsForYear(year, activeCat);
+              return (
+                <SwiperSlide key={year}>
+                  <article className="hdates-card">
+                    <div className="hdates-card__year">{year}</div>
+                    <div className="hdates-card__text">{text}</div>
+                  </article>
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        </div>
+
+        {/* МОБИЛЬНЫЙ нижний футер */}
+        <div className="hdates-mobile-footer">
+          <div className="hdates-mobile-footer__left">
+            <div className="hdates-mobile-footer__counter">
+              {String(activeIdx + 1).padStart(2, '0')}/{String(CATEGORY_ORDER.length).padStart(2, '0')}
+            </div>
+
+            <div className="hdates-mobile-footer__arrows">
+              <button
+                className="hdates-mobile-arrow"
+                aria-label="Предыдущий промежуток"
+                onClick={prevCategory}
+              >
+                <img src={arrowLeft} width={20} height={20} alt="" />
+              </button>
+              <button
+                className="hdates-mobile-arrow"
+                aria-label="Следующий промежуток"
+                onClick={nextCategory}
+              >
+                <img src={arrowRight} width={20} height={20} alt="" />
+              </button>
+            </div>
+          </div>
+
+          {/* контейнер под буллеты Swiper (центрируется стилями) */}
+          <div className="hdates-mobile-pagination" />
+        </div>
       </div>
     </section>
   );

@@ -61,6 +61,10 @@ body {
   padding: 20px 0 clamp(24px, 6vw, 70px) 0;
 }
 
+.hdates-mobile-footer, .hdates__mob-range {
+  display: none;
+}
+
 .hdates__stage {
   position: relative;
   height: var(--orbit-h);
@@ -376,9 +380,111 @@ body {
   }
 }
 @media (max-width: 767px) {
-  .swiper-pagination {
-    display: block !important;
+  .hdates {
+    padding-top: 60px;
+    padding-bottom: 96px; /* место под фикс-футер */
+  }
+  .hdates__title {
+    margin-bottom: 0;
+    max-width: 260px;
+    line-height: 1.25;
+  }
+  .hdates__title-br {
+    display: inline;
+  }
+  .hdates__years {
     position: static;
-    margin-top: 8px;
+    transform: none;
+    margin: 56px 0 0 0;
+    gap: 16px;
+    pointer-events: auto;
+  }
+  .hdates__mob-range {
+    margin-top: 65px;
+    font-weight: 700;
+    display: block;
+    font-size: 18px;
+    color: var(--c-text);
+  }
+  .hdates__mob-sep {
+    margin-top: 25px;
+    height: 1px;
+    width: 100%;
+    background: rgba(48, 62, 88, 0.2);
+  }
+  .hdates__grid-line,
+  .hdates__title-bar,
+  .hdates__orbit,
+  .hdates__nav,
+  .hdates__float-label {
+    display: none !important;
+  }
+  .hdates-events {
+    padding: 0;
+    top: 0;
+    position: static;
+  }
+  .hdates-events__top {
+    display: none;
+  }
+  .hdates-events__arrows,
+  .hdates-events__btn {
+    display: none !important;
+  }
+  /* Фиксированный нижний футер */
+  .hdates-mobile-footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: env(safe-area-inset-bottom);
+    z-index: 50;
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 8px;
+    padding: 0px 16px;
+  }
+  .hdates-mobile-footer__left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .hdates-mobile-footer__counter {
+    font-size: 16px;
+    color: var(--c-text);
+  }
+  .hdates-mobile-footer__arrows {
+    display: inline-flex;
+  }
+  .hdates-mobile-arrow {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: none;
+    display: grid;
+  }
+  .hdates-mobile-arrow img {
+    width: 100%;
+    height: 100%;
+  }
+  /* Пагинация по центру */
+  .hdates-mobile-pagination {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    z-index: -1;
+    top: 0 !important;
+    align-items: center;
+    min-height: 20px;
+  }
+  .hdates-mobile-pagination .swiper-pagination-bullet {
+    background: #AEB5C5 !important;
+    opacity: 1 !important;
+    width: 8px;
+    height: 8px;
+    margin: 0 6px !important;
+  }
+  .hdates-mobile-pagination .swiper-pagination-bullet-active {
+    background: #485679 !important;
   }
 }/*# sourceMappingURL=global.css.map */
