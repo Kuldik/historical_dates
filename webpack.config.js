@@ -3,30 +3,34 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const isDev = process.env.NODE_ENV !== 'production';
+const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
+  mode: isProd ? 'production' : 'development',
+
   entry: './src/index.tsx',
+
   output: {
-    filename: isDev ? 'js/bundle.js' : 'js/bundle.[contenthash:8].js',
     path: path.resolve(__dirname, 'dist'),
+    filename: isProd ? 'js/bundle.[contenthash:8].js' : 'js/bundle.js',
     clean: true,
-    publicPath: '/',
-    assetModuleFilename: 'assets/[name][hash][ext][query]'
+    publicPath: isProd ? './' : '/',               // важно для GitHub Pages
+    assetModuleFilename: 'assets/[name].[contenthash:8][ext][query]',
   },
+
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
-    alias: {
-      '@': path.resolve(__dirname, 'src')
-    }
+    alias: { '@': path.resolve(__dirname, 'src') },
   },
-  devtool: isDev ? 'source-map' : false,
+
+  devtool: isProd ? false : 'source-map',
+
   devServer: {
     port: 5173,
-    historyApiFallback: true,
     open: true,
     hot: true,
-    static: path.resolve(__dirname, 'dist')
+    historyApiFallback: true,
+    static: path.resolve(__dirname, 'public'),     // отдать статику в dev (если понадобится)
   },
 
   module: {
@@ -34,41 +38,53 @@ module.exports = {
       {
         test: /\.[tj]sx?$/,
         use: 'ts-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
-        test: /\.s?css$/,
+        test: /\.s?css$/i,
         use: [
-          isDev ? 'style-loader' : MiniCssExtractPlugin.loader,
-          { loader: 'css-loader', options: { sourceMap: isDev } },
+          isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+          { loader: 'css-loader', options: { sourceMap: !isProd } },
           {
             loader: 'postcss-loader',
             options: {
-              sourceMap: isDev,
-              postcssOptions: { plugins: [require('autoprefixer')] }
-            }
+              sourceMap: !isProd,
+              postcssOptions: { plugins: [require('autoprefixer')] },
+            },
           },
-          { loader: 'sass-loader', options: { sourceMap: isDev } }
-        ]
+          { loader: 'sass-loader', options: { sourceMap: !isProd } },
+        ],
       },
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
-        type: 'asset/resource'
+        type: 'asset/resource',
       },
       {
         test: /\.(woff2?|eot|ttf|otf)$/i,
-        type: 'asset/resource'
-      }
-    ]
+        type: 'asset/resource',
+      },
+    ],
   },
+
   plugins: [
+    // index.html
     new HtmlWebpackPlugin({
-      template: 'src/public/index.html',
-      inject: 'body'
+      template: 'public/index.html',               // правильный путь
+      filename: 'index.html',
+      inject: 'body',
+      minify: isProd,
     }),
+
+    // 404.html — дубликат index для SPA фолбэка на GitHub Pages
+    new HtmlWebpackPlugin({
+      template: 'public/index.html',
+      filename: '404.html',
+      inject: 'body',
+      minify: isProd,
+    }),
+
     new MiniCssExtractPlugin({
-      filename: isDev ? 'css/main.css' : 'css/main.[contenthash:8].css'
-    })
+      filename: isProd ? 'css/main.[contenthash:8].css' : 'css/main.css',
+    }),
   ],
-  mode: isDev ? 'development' : 'production'
 };
