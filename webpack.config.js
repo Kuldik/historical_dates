@@ -14,7 +14,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: isProd ? 'js/bundle.[contenthash:8].js' : 'js/bundle.js',
     clean: true,
-    publicPath: isProd ? './' : '/',               // важно для GitHub Pages
+    publicPath: isProd ? './' : '/',              
     assetModuleFilename: 'assets/[name].[contenthash:8][ext][query]',
   },
 
@@ -30,7 +30,7 @@ module.exports = {
     open: true,
     hot: true,
     historyApiFallback: true,
-    static: path.resolve(__dirname, 'public'),     // отдать статику в dev (если понадобится)
+    static: path.resolve(__dirname, 'public'), 
   },
 
   module: {
@@ -69,7 +69,7 @@ module.exports = {
   plugins: [
     // index.html
     new HtmlWebpackPlugin({
-      template: 'public/index.html',               // правильный путь
+      template: 'src/public/index.html',               
       filename: 'index.html',
       inject: 'body',
       minify: isProd,
@@ -77,7 +77,7 @@ module.exports = {
 
     // 404.html — дубликат index для SPA фолбэка на GitHub Pages
     new HtmlWebpackPlugin({
-      template: 'public/index.html',
+      template: 'src/public/index.html',
       filename: '404.html',
       inject: 'body',
       minify: isProd,
