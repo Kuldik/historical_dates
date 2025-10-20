@@ -1,7 +1,6 @@
 # Исторические даты (React + TypeScript + Webpack 5)
 
-🕰️ **Демо (GitHub Pages):** https://<your-github-username>.github.io/historical_dates/  
-(замени `<your-github-username>` и см. раздел «Публикация» ниже)
+🕰️ **Демо (GitHub Pages):** https://Kuldik.github.io/historical_dates/  
 
 ---
 
