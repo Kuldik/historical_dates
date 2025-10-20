@@ -1,7 +1,6 @@
 # Исторические даты (React + TypeScript + Webpack 5)
 
-🕰️ **Демо (GitHub Pages):** https://<your-github-username>.github.io/historical_dates/  
-(замени `<your-github-username>` и см. раздел «Публикация» ниже)
+🕰️ **Демо (GitHub Pages):** https://Kuldik.github.io/historical_dates/  
 
 ---
 
@@ -46,7 +45,6 @@
 
 ## 🗂 Структура
 ---
-
 historical_dates/
 ├─ public/
 │ └─ index.html # шаблон HTML для HtmlWebpackPlugin (копия в 404.html при билде)
@@ -72,7 +70,7 @@ historical_dates/
 ├─ package.json
 ├─ tsconfig.json
 └─ webpack.config.js
-
+```
 ---
 
 ## 📎 Данные
@@ -109,21 +107,32 @@ historical_dates/
 > Требуется **Node.js LTS** (рекомендуется 18+).
 
 1) **Клонирование репозитория и переход в папку проекта**
-```bash
+```
 git clone https://github.com/<your-github-username>/historical_dates.git
+```
+```
 cd historical_dates
+```
 
 # Установка зависимостей
+```
 npm i
+```
 
 # Запуск дев-сервера
+```
 npm run dev
-# Откроется http://localhost:5173
+```
+### Откроется http://localhost:5173
 
 # Прод-сборка
+```
 npm run build
+```
 # Сборка проекта появится в /dist
 
-# Локальный предпросмотр сборки
+### Локальный предпросмотр сборки
+```
 npm run preview
-# http://localhost:5173 (serve из dist)
+```
+
