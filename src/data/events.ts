@@ -1,22 +1,14 @@
 // src/data/events.ts
 import type { Category } from './categories';
+import { CATEGORY_ORDER } from './constants';
 
-/** Константы таймлайна: 6 промежутков по 5 лет, финал в 2025 */
+/** Константы таймлайна */
 export const END_YEAR = 2025;
 export const INTERVALS_COUNT = 6;
 export const YEARS_PER_INTERVAL = 5;
 export const START_YEAR = END_YEAR - INTERVALS_COUNT * YEARS_PER_INTERVAL + 1; // 1996
 
-/** Порядок категорий соответствует визуальному порядку 6 промежутков */
-export const CATEGORY_ORDER: Category[] = [
-  'Информатика',
-  'Кинематограф',
-  'Игры',
-  'Литература',
-  'Наука',
-  'Политика',
-];
-
+/** Диапазоны лет для каждого сегмента по визуальному порядку */
 export const CATEGORY_INTERVALS: Record<Category, { from: number; to: number }> =
   CATEGORY_ORDER.reduce((acc, cat, idx) => {
     const from = START_YEAR + idx * YEARS_PER_INTERVAL;
@@ -25,11 +17,8 @@ export const CATEGORY_INTERVALS: Record<Category, { from: number; to: number }> 
     return acc;
   }, {} as Record<Category, { from: number; to: number }>);
 
-/** Реальные события по категориям и годам. */
-export const CATEGORY_YEAR_EVENTS: Record<
-  Category,
-  Record<number, string>
-> = {
+/** События по годам */
+export const CATEGORY_YEAR_EVENTS: Record<Category, Record<number, string>> = {
   // 1996–2000
   'Информатика': {
     1996: 'Выпуск Java 1.0; формируется эпоха кросс-платформенной разработки.',
