@@ -45,6 +45,7 @@
 
 ## 🗂 Структура
 ---
+```
 historical_dates/
 ├─ public/
 │ └─ index.html # шаблон HTML для HtmlWebpackPlugin (копия в 404.html при билде)
