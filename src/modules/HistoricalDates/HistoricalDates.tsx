@@ -109,7 +109,12 @@ export const HistoricalDates: React.FC = () => {
           <button className="hdates-events__btn hdates-events__btn--next js-events-next" aria-label="Следующие годы"><img src={arrowDatesRight} width={64} height={64} alt="" /></button>
         </div>
 
-        <EventsSlider from={from} to={to} getText={(y) => eventsForYear(y, activeCat)} />
+        <EventsSlider
+          key={`${activeCat}-${from}-${to}`}  
+          from={from}
+          to={to}
+          getText={(y) => eventsForYear(y, activeCat)}
+        />
 
         <div className="hdates-mobile-footer">
           <div className="hdates-mobile-footer__left">
