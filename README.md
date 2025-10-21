@@ -48,26 +48,31 @@
 ```
 historical_dates/
 ├─ public/
-│ └─ index.html # шаблон HTML для HtmlWebpackPlugin (копия в 404.html при билде)
+│  └─ index.html                         # шаблон для HtmlWebpackPlugin (также копируется в 404.html)
 ├─ src/
-│ ├─ assets/
-│ │ ├─ arrow-left.svg
-│ │ ├─ arrow-right.svg
-│ │ ├─ arrow-dates-left.svg
-│ │ └─ arrow-dates-right.svg
-│ ├─ data/
-│ │ ├─ categories.ts # список категорий
-│ │ ├─ events.ts # события по категориям и годам
-│ │ └─ ranges.ts # хелперы: интервалы/индексы/маппинг
-│ ├─ modules/
-│ │ ├─ App.tsx
-│ │ └─ HistoricalDates/
-│ │ └─ HistoricalDates.tsx
-│ ├─ styles/
-│ │ └─ global.scss # переменные, базовые стили, БЭМ-блок
-│ ├─ types/
-│ │ └─ assets.d.ts # типы для svg/css/scss и swiper/css
-│ └─ index.tsx
+│  ├─ assets/
+│  │  ├─ arrow-left.svg
+│  │  ├─ arrow-right.svg
+│  │  ├─ arrow-dates-left.svg
+│  │  └─ arrow-dates-right.svg
+│  ├─ data/
+│  │  ├─ categories.ts                   # список категорий + тип Category
+│  │  ├─ events.ts                       # события по категориям и годам
+│  │  └─ ranges.ts                       # интервалы/индексы/маппинг (использует categories.ts/events.ts)
+│  ├─ features/
+│  │  └─ hdates/
+│  │     ├─ EventsSlider.tsx             # слайдер годов + пагинация/навигация
+│  │     ├─ useOrbitLabels.ts            # вращение орбиты и лейблов (GSAP)
+│  │     └─ useCountUp.ts                # анимация чисел from/to (GSAP)
+│  ├─ modules/
+│  │  ├─ App.tsx
+│  │  └─ HistoricalDates/
+│  │     └─ HistoricalDates.tsx          # главный UI блока “Исторические даты”
+│  ├─ styles/
+│  │  └─ global.scss                     # переменные, базовые стили, БЭМ-блоки
+│  ├─ types/
+│  │  └─ assets.d.ts                     # типы для импорта svg/css/scss и swiper/css
+│  └─ index.tsx                          # точка входа React
 ├─ package.json
 ├─ tsconfig.json
 └─ webpack.config.js
